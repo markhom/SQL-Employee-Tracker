@@ -72,15 +72,16 @@ function employeeTracker() {
 function addDepartment() {
     inquirer.prompt({
         type: "input",
-        messsage: "What is the name of the department?",
+        message: "What is the name of the department?",
         name: "departmentName"
     }).then(function (answer) {
-        db.query("INSERT INTO department (name) VALUES (?)"), [answer.departmentName], function (err, res) {
+        const query = "INSERT INTO department (name) VALUES (?)";
+        db.query(query, [answer.departmentName], function (err, res) {
             if (err) throw err;
-            console.table(res)
+            console.table(res);
             employeeTracker();
-        }
-    })
+        });
+    });
 }
 
 function addRole() {
@@ -102,13 +103,14 @@ function addRole() {
         }
     ])
     .then(function(answer) {
-        db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.salary, answer.departmentId], function(err, res) {
+        const query = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+        db.query(query, [answer.roleName, answer.salary, answer.departmentId], function(err, res) {
             if(err) throw err;
             console.table(res);
             employeeTracker();
         });
     });
-};
+}
 
 function addEmployee() {
     inquirer.prompt([
@@ -125,22 +127,21 @@ function addEmployee() {
         {
             type: "input",
             message: "What is the employee's role id number?",
-            name: roleId
+            name: "roleId"
         },
         {
             type: "input",
             message: "What is the manager id number?",
-            name: managerId
+            name: "managerId"
         }
     ]).then(function(answer) {
-
-      
-        db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstNameInput, answer.lastNameInput, answer.roleId, answer.managerId], function(err, res) {
-          if (err) throw err;
-          console.table(res);
-          employeeTracker();
+        const query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+        db.query(query, [answer.firstNameInput, answer.lastNameInput, answer.roleId, answer.managerId], function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            employeeTracker();
         });
-});
+    });
 }
 
 function updateEmployee() {
@@ -157,14 +158,14 @@ function updateEmployee() {
         name: "updateRole"
       }
     ]).then(function(answer) {
-
-      db.query('UPDATE employee SET role_id=? WHERE first_name= ?',[answer.updateRole, answer.employeeUpdate],function(err, res) {
-        if (err) throw err;
-        console.table(res);
-        employeeTracker();
+        const query = 'UPDATE employee SET role_id=? WHERE first_name=?';
+        db.query(query, [answer.updateRole, answer.employeeUpdate], function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          employeeTracker();
+        });
       });
-    });
-}
+  }
 
 function viewDepartment() {
     // select from the db
