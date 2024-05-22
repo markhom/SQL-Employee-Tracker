@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "## Your Task",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "inquirer": "^9.2.22",
     "mysql2": "^3.9.7"
   }
 }
