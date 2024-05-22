@@ -7,13 +7,15 @@ import { table } from 'table';
 const db = mysql.createConnection(
     {
         host: 'localhost',
-        port: 3001,
+        port: 3306,
         user: 'root',
         password: '',
         database: 'employee_tracker_db'
     },
     console.log(`Connected to the employee_tracker_db database.`)
 );
+
+employeeTracker();
 
 //Starting prompt function
 
@@ -73,7 +75,7 @@ function addDepartment() {
         messsage: "What is the name of the department?",
         name: "departmentName"
     }).then(function (answer) {
-        connection.query("INSERT INTO department (name) VALUES (?)"), [answer.departmentName], function (err, res) {
+        db.query("INSERT INTO department (name) VALUES (?)"), [answer.departmentName], function (err, res) {
             if (err) throw err;
             console.table(res)
             employeeTracker();
@@ -100,7 +102,7 @@ function addRole() {
         }
     ])
     .then(function(answer) {
-        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.salary, answer.departmentId], function(err, res) {
+        db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.salary, answer.departmentId], function(err, res) {
             if(err) throw err;
             console.table(res);
             employeeTracker();
@@ -133,7 +135,7 @@ function addEmployee() {
     ]).then(function(answer) {
 
       
-        connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.eeFirstName, answer.eeLastName, answer.roleID, answer.managerID], function(err, res) {
+        db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstNameInput, answer.lastNameInput, answer.roleId, answer.managerId], function(err, res) {
           if (err) throw err;
           console.table(res);
           employeeTracker();
@@ -141,4 +143,64 @@ function addEmployee() {
 });
 }
 
-employeeTracker();
+function updateEmployee() {
+    inquirer.prompt([
+      {
+        type: "input",
+        message: "Which employee would you like to update?",
+        name: "employeeUpdate"
+      },
+
+      {
+        type: "input",
+        message: "What do you want to update to?",
+        name: "updateRole"
+      }
+    ]).then(function(answer) {
+
+      db.query('UPDATE employee SET role_id=? WHERE first_name= ?',[answer.updateRole, answer.employeeUpdate],function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        employeeTracker();
+      });
+    });
+}
+
+function viewDepartment() {
+    // select from the db
+    let query = "SELECT * FROM department";
+    db.query(query, function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      employeeTracker();
+    });
+    
+  }
+  
+  function viewRoles() {
+    // select from the db
+    let query = "SELECT * FROM role";
+    db.query(query, function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      employeeTracker();
+    });
+    
+  }
+  
+  function viewEmployees() {
+    // select from the db
+    let query = "SELECT * FROM employee";
+    db.query(query, function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      employeeTracker();
+    });
+    
+  }
+
+  function quit() {
+    db.end();
+    process.exit();
+  }
+
